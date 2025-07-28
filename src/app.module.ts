@@ -14,6 +14,14 @@ import { Work_session } from './sessions/sessions.entity';
 import { EmployeesController } from './employees/employees.controller';
 import { EmployeesService } from './employees/employees.service';
 import { EmployeesModule } from './employees/employees.module';
+import { AttendanceController } from './attendance/attendance.controller';
+import { AttendanceService } from './attendance/attendance.service';
+import { AttendanceModule } from './attendance/attendance.module';
+import { SessionsModule } from './sessions/sessions.module';
+import { ShiftsController } from './shifts/shifts.controller';
+import { ShiftsService } from './shifts/shifts.service';
+import { ShiftsModule } from './shifts/shifts.module';
+import { TerminalsModule } from './terminals/terminals.module';
 
 
 
@@ -33,10 +41,14 @@ import { EmployeesModule } from './employees/employees.module';
     
     AuthModule,
     UsersModule,
-    EmployeesModule
+    EmployeesModule,
+    AttendanceModule,
+    SessionsModule,
+    ShiftsModule,
+    TerminalsModule
   ],
-  providers: [AuthService, EmployeesService],
-  controllers: [AuthController, EmployeesController],
+  providers: [AuthService, EmployeesService, AttendanceService, ShiftsService],
+  controllers: [AuthController, EmployeesController, AttendanceController, ShiftsController],
   exports: [AuthService]
 
 })
