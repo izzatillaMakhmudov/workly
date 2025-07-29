@@ -8,6 +8,7 @@ import { Users } from 'src/users/user.entity';
 import { Terminal } from 'src/terminals/terminals.entity';
 import { Department } from 'src/department/department.entity';
 import { Shift } from 'src/shifts/shifts.entity';
+import { UsersService } from 'src/users/users.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([
@@ -17,7 +18,7 @@ import { Shift } from 'src/shifts/shifts.entity';
     Department,
     Shift
   ])],
-  providers: [AuthGuard, CompaniesService],
+  providers: [AuthGuard, CompaniesService, UsersService],
   controllers: [CompaniesController],
   exports: [CompaniesService],
 })

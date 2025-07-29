@@ -1,10 +1,12 @@
-import { BadRequestException, Body, Injectable, Req, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Body, Injectable, NotFoundException, Req, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from './user.entity';
 import { Repository } from 'typeorm';
 import { Company } from 'src/companies/companies.entity';
 import { Department } from 'src/department/department.entity';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UserPermissions } from './permissions.enum';
 
 @Injectable()
 export class UsersService {
@@ -36,7 +38,33 @@ export class UsersService {
             .getMany();
     }
 
-    
+    async findById(id: number): Promise<Users | null> {
+        return this.usersRepository.findOne({
+            where: { id },
+            relations: ['company', 'department']
+        });
+    }
+
+    async update(id: number, updateUserDto: UpdateUserDto): Promise<Users | null> {
+        await this.usersRepository.update(id, updateUserDto);
+        return this.findOne(id);
+    }
+
+    findOne(id: number): Promise<Users | null> {
+        return this.usersRepository.findOne({ where: { id } });
+    }
+
+    async remove(id: number): Promise<void> {
+        await this.usersRepository.delete(id);
+    }
+
+    async updatePermissions(userId: number, permissions: UserPermissions[]) {
+        const user = await this.usersRepository.findOne({ where: { id: userId } });
+        if (!user) throw new NotFoundException('User not found');
+
+        user.permissions = permissions;
+        return this.usersRepository.save(user);
+    }
 
     async createFromAdmin(dto: CreateUserDto, adminId: number) {
         const admin = await this.usersRepository.findOne({

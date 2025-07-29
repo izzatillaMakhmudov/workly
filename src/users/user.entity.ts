@@ -1,6 +1,7 @@
 import { Company } from "src/companies/companies.entity";
 import { Department } from "src/department/department.entity";
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { UserPermissions } from "./permissions.enum";
 
 export enum UserRole {
     ADMIN = 'admin',
@@ -49,4 +50,7 @@ export class Users {
 
     @CreateDateColumn()
     created_at: Date;
+
+    @Column('enum', {enum: UserPermissions, array: true, default: ['view_user']})
+    permissions: UserPermissions[];
 }
