@@ -1,4 +1,5 @@
 import { Company } from "src/companies/companies.entity";
+import { Department } from "src/department/department.entity";
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 export enum UserRole {
@@ -13,17 +14,17 @@ export class Users {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ unique: true })
-    username: string;
+    @Column({ nullable: false })
+    first_name: string;
 
-    @Column()
-    password: string;
+    @Column({ nullable: false })
+    last_name: string;
 
     @Column({ unique: true })
     email: string;
 
     @Column()
-    name: string;
+    password: string;
 
     @Column({
         type: 'enum',
@@ -31,12 +32,20 @@ export class Users {
     })
     role: UserRole;
 
-    @Column({ default: true })
-    is_active: boolean;
+    @Column({ 
+        nullable: false,
+        unique: true, 
+        type: 'bigint'  // Assuming PNFL is a large number, using bigint
+     })
+    pnfl: number
 
     @ManyToOne(() => Company, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'company_id' })
     company: Company;
+
+    @ManyToOne(()=> Department, { onDelete: 'SET NULL', nullable: true })
+    @JoinColumn({ name: 'department_id' })
+    department: Department;
 
     @CreateDateColumn()
     created_at: Date;

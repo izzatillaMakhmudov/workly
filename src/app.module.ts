@@ -7,13 +7,9 @@ import { AuthController } from './auth/auth.controller';
 import { Users } from './users/user.entity';
 import { Company } from './companies/companies.entity';
 import { Attendance_log } from './attendance/attendance.entity';
-import { Employee } from './employees/employees.entity';
 import { Terminal } from './terminals/terminals.entity';
 import { Shift } from './shifts/shifts.entity';
 import { Work_session } from './sessions/sessions.entity';
-import { EmployeesController } from './employees/employees.controller';
-import { EmployeesService } from './employees/employees.service';
-import { EmployeesModule } from './employees/employees.module';
 import { AttendanceController } from './attendance/attendance.controller';
 import { AttendanceService } from './attendance/attendance.service';
 import { AttendanceModule } from './attendance/attendance.module';
@@ -22,33 +18,65 @@ import { ShiftsController } from './shifts/shifts.controller';
 import { ShiftsService } from './shifts/shifts.service';
 import { ShiftsModule } from './shifts/shifts.module';
 import { TerminalsModule } from './terminals/terminals.module';
-
+import { DepartmentController } from './department/department.controller';
+import { DepartmentService } from './department/department.service';
+import { DepartmentModule } from './department/department.module';
+import { Department } from './department/department.entity';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { CompaniesService } from './companies/companies.service';
+import { CompaniesModule } from './companies/companies.module';
+import { JobTitleController } from './job-title/job-title.controller';
+import { JobTitleService } from './job-title/job-title.service';
+import { JobTitleModule } from './job-title/job-title.module';
 
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'izzatillamakhmudov',
-      password: 'AnNur2227!',
-      database: 'workly',
-      autoLoadEntities: true,
-      entities: [Users, Company, Attendance_log, Employee, Terminal, Shift, Work_session],
-      synchronize: true,
+    ConfigModule.forRoot({
+      envFilePath: '.env',
+      isGlobal: true,
     }),
-    
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (ConfigService: ConfigService) => ({
+        type: 'postgres',
+        host: ConfigService.get<string>('DB_HOST'),
+        port: ConfigService.get<number>('DB_PORT'),
+        username: ConfigService.get<string>('DB_USERNAME'),
+        password: ConfigService.get<string>('DB_PASSWORD'),
+        database: ConfigService.get<string>('DB_NAME'),
+        autoLoadEntities: true,
+        entities: [Users, Company, Attendance_log, Terminal, Shift, Work_session, Department],
+        synchronize: true,
+      }),
+      inject: [ConfigService]
+    }),
+
     AuthModule,
     UsersModule,
-    EmployeesModule,
     AttendanceModule,
     SessionsModule,
     ShiftsModule,
-    TerminalsModule
+    TerminalsModule,
+    DepartmentModule,
+    CompaniesModule,
+    JobTitleModule
   ],
-  providers: [AuthService, EmployeesService, AttendanceService, ShiftsService],
-  controllers: [AuthController, EmployeesController, AttendanceController, ShiftsController],
+  providers: [
+    AuthService,
+    AttendanceService,
+    ShiftsService,
+    DepartmentService,
+    JobTitleService
+  ],
+
+  controllers: [
+    AuthController,
+    AttendanceController,
+    ShiftsController,
+    DepartmentController,
+    JobTitleController
+  ],
   exports: [AuthService]
 
 })

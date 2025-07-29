@@ -1,5 +1,4 @@
 import { Company } from "src/companies/companies.entity";
-import { Employee } from "src/employees/employees.entity";
 import { Terminal } from "src/terminals/terminals.entity";
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
@@ -11,10 +10,6 @@ export class Attendance_log {
   @ManyToOne(() => Company, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'company_id' })
   company: Company;
-
-  @ManyToOne(() => Employee, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'employee_id' })
-  employee: Employee;
 
   @ManyToOne(() => Terminal, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'terminal_id' })
