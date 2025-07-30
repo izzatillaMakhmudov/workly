@@ -105,7 +105,7 @@ export class ShiftsService {
         await this.shiftsRepository.delete(id)
     }
 
-    async update(adminId: number, id: number, updateShiftDto: UpdateShiftDto) {
+    async update(adminId: number, id: number, updateShiftDto: UpdateShiftDto): Promise<Shift | null> {
         // console.log('Updating the shift with id: ', id)
 
         const admin = await this.usersRepository.findOne({
@@ -125,7 +125,7 @@ export class ShiftsService {
         }
 
         await this.shiftsRepository.update(id, updateShiftDto)
-        return this.shiftsRepository.findOne({where: {id}})
+        return this.shiftsRepository.findOne({ where: { id } })
     }
 
 
