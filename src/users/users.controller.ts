@@ -14,12 +14,6 @@ export class UsersController {
     constructor(private usersService: UsersService) { }
 
     @UseGuards(AuthGuard)
-    @Get('')
-    async getUsers(@Req() req: Request) {
-        const companyId = req.user.companyId;
-        if (!companyId) { throw new ForbiddenException('Missing company scope') }
-        return this.usersService.findAll(companyId);
-    }
 
     @Post('create')
     @Permissions(UserPermissions.CREATE_USER)

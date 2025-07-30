@@ -2,6 +2,7 @@ import { Company } from "src/companies/companies.entity";
 import { Department } from "src/department/department.entity";
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { UserPermissions } from "./permissions.enum";
+import { Shift } from "src/shifts/shifts.entity";
 
 export enum UserRole {
     ADMIN = 'admin',
@@ -47,6 +48,10 @@ export class Users {
     @ManyToOne(()=> Department, { onDelete: 'SET NULL', nullable: true })
     @JoinColumn({ name: 'department_id' })
     department: Department;
+
+    @ManyToOne(()=> Shift, { onDelete: 'SET NULL', nullable: true })
+    @JoinColumn({ name: 'shift_id' })
+    shift: Shift;
 
     @CreateDateColumn()
     created_at: Date;

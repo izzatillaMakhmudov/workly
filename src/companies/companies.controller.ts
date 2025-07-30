@@ -20,7 +20,7 @@ export class CompaniesController {
         private readonly usersService: UsersService,
     ) { }
 
-    
+
     @Get(':id/users')
     async findUsersByCompanyId(
         @Param('id') id: number
@@ -33,7 +33,7 @@ export class CompaniesController {
         return company.users;
     }
 
-    
+
     @Get('departments')
     async getDepartmentsForCompany(@Req() req: Request) {
         const user = req['user'];

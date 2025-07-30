@@ -1,17 +1,14 @@
 import { Company } from "src/companies/companies.entity";
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Users } from "src/users/user.entity";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('shifts')
 export class Shift {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Company, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'company_id' })
-  company: Company;
-
   @Column()
-  shift_name: string;
+  name: string;
 
   @Column()
   start_time: string;
@@ -27,4 +24,11 @@ export class Shift {
 
   @CreateDateColumn()
   created_at: Date;
+
+  @OneToMany(() => Users, user => user.shift, { onDelete: 'SET NULL' }) 
+  users: Users[];
+
+  @ManyToOne(() => Company, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'company_id' })
+  company: Company;
 }
