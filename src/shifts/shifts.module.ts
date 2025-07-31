@@ -13,10 +13,8 @@ import { CompaniesModule } from 'src/companies/companies.module';
 @Module({
     imports: [
         TypeOrmModule.forFeature([
-            Shift,
-            Company,
-            Users,
-            Department
+            Shift,        
+            Users
         ]),
         UsersModule,
         CompaniesModule

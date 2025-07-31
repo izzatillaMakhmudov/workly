@@ -1,8 +1,7 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Shift } from './shifts.entity';
 import { Repository } from 'typeorm';
-import { Company } from 'src/companies/companies.entity';
 import { Users } from 'src/users/user.entity';
 import { CreateShiftDto } from './dto/create-shift.dto';
 import { UpdateShiftDto } from './dto/update-shift.dto';
@@ -12,9 +11,6 @@ export class ShiftsService {
     constructor(
         @InjectRepository(Shift)
         private readonly shiftsRepository: Repository<Shift>,
-
-        @InjectRepository(Company)
-        private readonly companyRepository: Repository<Company>,
 
         @InjectRepository(Users)
         private readonly usersRepository: Repository<Users>
@@ -59,7 +55,7 @@ export class ShiftsService {
         });
 
         if (shift?.company?.id !== admin.company.id) {
-            throw new UnauthorizedException('Something went wrong');
+            throw new ForbiddenException('Something went wrong');
         }
         return shift;
     }
@@ -77,7 +73,7 @@ export class ShiftsService {
         if (!admin || !admin.company) throw new UnauthorizedException('Admin has no company assigned');
 
         return this.shiftsRepository.find({
-            where: { company: { id: admin.company.id } },
+            where: { company: { id: admin.company.id } }
         });
     }
 
@@ -98,8 +94,10 @@ export class ShiftsService {
             relations: ['company']
         });
 
+        if (!shift) throw new NotFoundException("Shift not found")
+
         if (shift?.company?.id !== admin.company.id) {
-            throw new UnauthorizedException('Something went wrong');
+            throw new ForbiddenException('Something went wrong');
         }
 
         await this.shiftsRepository.delete(id)
@@ -121,7 +119,7 @@ export class ShiftsService {
         });
 
         if (shift?.company?.id !== admin.company.id) {
-            throw new UnauthorizedException('Something went wrong');
+            throw new ForbiddenException('Something went wrong');
         }
 
         await this.shiftsRepository.update(id, updateShiftDto)

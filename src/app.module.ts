@@ -64,9 +64,6 @@ import { JobTitleModule } from './job-title/job-title.module';
   ],
   providers: [
     AuthService,
-    AttendanceService,
-    DepartmentService,
-    JobTitleService
   ],
 
   controllers: [
