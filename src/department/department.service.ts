@@ -71,7 +71,7 @@ export class DepartmentService {
         return department
     }
 
-    async update(adminId: number, id: number, updateDepartmentDto: UpdateDepartmentDto) {
+    async update(adminId: number, id: number, updateDepartmentDto: UpdateDepartmentDto): Promise<Department | null> {
 
         const admin = await this.usersRepository.findOne({
             where: { id: adminId },

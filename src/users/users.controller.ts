@@ -9,29 +9,31 @@ import { Permissions } from 'src/common/decorators/permissions.decorator';
 import { UserPermissions } from './permissions.enum';
 
 @Controller('users')
-@UseGuards(AuthGuard, PermissionGuard)
+@UseGuards(AuthGuard)
 export class UsersController {
     constructor(private usersService: UsersService) { }
 
-    @UseGuards(AuthGuard)
 
     @Post('create')
-    @Permissions(UserPermissions.CREATE_USER)
     async create(@Req() req: Request, @Body() dto: CreateUserDto) {
         const adminUser = req['user']
         return this.usersService.createFromAdmin(dto, adminUser.sub)
     }
 
     @Get(':id')
-    @UseGuards(AuthGuard)
     findOne(@Param('id') id: number) {
         return this.usersService.findOne(id);
     }
 
     @Patch(':id')
-    @UseGuards(AuthGuard)
     update(@Param('id') id: number, @Body() dto: UpdateUserDto) {
         return this.usersService.update(id, dto);
+    }
+
+    @Get()
+    async findAll(@Req() req: Request) {
+        const admin = req['user']
+        return this.usersService.findAll(admin.sub)
     }
 
     @Delete(':id')

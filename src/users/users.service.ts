@@ -29,13 +29,21 @@ export class UsersService {
             .getOne();
     }
 
-    async findAll(companyId: number): Promise<Users[]> {
-        return this.usersRepository
-            .createQueryBuilder('user')
-            .select(['user.id', 'user.username', 'user.email', 'user.name', 'user.role', 'user.is_active', 'company.name'])
-            .leftJoin('user.company', 'company')
-            .where('user.company_id = :companyId', { companyId })
-            .getMany();
+    async findAll(adminId: number) {
+        const admin = await this.usersRepository.findOne({
+            where: { id: adminId },
+            relations: ['company']
+        });
+
+        if (!admin || !admin.company) throw new UnauthorizedException('Admin has no company assigned');
+
+        const users = this.usersRepository.find({
+            where: { company: { id: admin.company.id } },
+            relations: ['company']
+        })
+
+        return users;
+
     }
 
     async findById(id: number): Promise<Users | null> {
