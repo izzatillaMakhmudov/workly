@@ -21,30 +21,4 @@ export class CompaniesController {
     ) { }
 
 
-    @Get(':id/users')
-    async findUsersByCompanyId(
-        @Param('id') id: number
-    ) {
-        console.log('Fetching users for company ID:', id);
-        const company = await this.companiesService.findUsersByCompanyId(+id)
-        if (!company) {
-            throw new InternalServerErrorException('Company not found');
-        }
-        return company.users;
-    }
-
-
-    @Get('departments')
-    async getDepartmentsForCompany(@Req() req: Request) {
-        const user = req['user'];
-        const admin = await this.usersService.findById(user.sub);
-        if (!admin?.company) throw new UnauthorizedException();
-
-        return this.departmentRepo.find({
-            where: { company: { id: admin.company.id } },
-        });
-    }
-
-
-
 }

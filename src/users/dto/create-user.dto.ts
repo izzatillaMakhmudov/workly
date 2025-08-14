@@ -1,6 +1,6 @@
 import { IsEmail, IsNumber, IsOptional } from "class-validator";
 import { Column } from "typeorm";
-import { UserRole } from "../user.entity";
+import { UserGender, UserRole } from "../user.entity";
 
 export class CreateUserDto {
 
@@ -27,11 +27,22 @@ export class CreateUserDto {
     })
     role: UserRole;
 
+    @Column({
+        type: 'enum',
+        enum: UserGender,
+        default: 'not set'
+    })
+    gender: UserGender;
+
     @IsNumber()
-    pnfl: number;
+    pinfl: number;
 
     @IsOptional()
     @IsNumber()
     department_id?: number;
+
+    @IsOptional()
+    @IsNumber()
+    shift_id?: number;
 
 }

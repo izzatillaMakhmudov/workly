@@ -14,20 +14,10 @@ export class UsersController {
     constructor(private usersService: UsersService) { }
 
 
-    @Post('create')
+    @Post()
     async create(@Req() req: Request, @Body() dto: CreateUserDto) {
         const adminUser = req['user']
-        return this.usersService.createFromAdmin(dto, adminUser.sub)
-    }
-
-    @Get(':id')
-    findOne(@Param('id') id: number) {
-        return this.usersService.findOne(id);
-    }
-
-    @Patch(':id')
-    update(@Param('id') id: number, @Body() dto: UpdateUserDto) {
-        return this.usersService.update(id, dto);
+        return this.usersService.createUser(dto, adminUser.sub)
     }
 
     @Get()
@@ -36,9 +26,22 @@ export class UsersController {
         return this.usersService.findAll(admin.sub)
     }
 
+    @Get(':id')
+    async findOne(@Param('id') id: number, @Req() req: Request) {
+        const admin = req['user']
+        return this.usersService.findOne(admin.sub, id);
+    }
+
+    @Patch(':id')
+    async update(@Param('id') id: number, @Req() req: Request, @Body() dto: UpdateUserDto) {
+        const admin = req['user']
+        return this.usersService.update(admin.sub, id, dto);
+    }
+
+
     @Delete(':id')
-    @UseGuards(AuthGuard)
-    remove(@Param('id') id: number) {
-        return this.usersService.remove(id);
+    async remove(@Param('id') id: number, @Req() req: Request) {
+        const admin = req['user']
+        return this.usersService.delete(admin.sub, id);
     }
 }

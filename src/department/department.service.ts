@@ -16,9 +16,8 @@ export class DepartmentService {
         private readonly usersRepository: Repository<Users>
     ) { }
 
-    async createDepartment(adminId: number, dto: CreateDepartmentDto) {
+    async createDepartment(adminId: number, dto: CreateDepartmentDto): Promise<Department | null> {
 
-        // console.log("admin id:, ", adminId)
         const admin = await this.usersRepository.findOne({
             where: { id: adminId },
             relations: ['company']
@@ -47,7 +46,6 @@ export class DepartmentService {
             relations: ['company']
         })
 
-        // console.log("departments: ", departments)
         return departments
     }
 
