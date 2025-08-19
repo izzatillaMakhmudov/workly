@@ -10,7 +10,12 @@ import { Shift } from 'src/shifts/shifts.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Users, Company, Department, Shift])
+    TypeOrmModule.forFeature([
+      Users,
+      Company,
+      Department,
+      Shift
+    ])
   ],
   providers: [
     UsersService,

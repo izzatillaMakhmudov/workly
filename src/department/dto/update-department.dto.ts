@@ -1,4 +1,10 @@
-import { PartialType } from "@nestjs/mapped-types";
-import { CreateDepartmentDto } from "./create-department.dto";
 
-export class UpdateDepartmentDto extends PartialType(CreateDepartmentDto) { }
+import { Column } from "typeorm";
+
+export class UpdateDepartmentDto {
+    @Column({ nullable: false })
+    name: string;
+
+    @Column({ nullable: true })
+    description: string;
+}

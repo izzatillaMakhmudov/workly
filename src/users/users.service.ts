@@ -155,8 +155,6 @@ export class UsersService {
                 throw new NotFoundException('User Not Found')
             }
 
-
-
             if (updateUserDto.password) {
                 (updateUserDto as any).hashed_password = updateUserDto.password;
                 delete (updateUserDto as any).password;
