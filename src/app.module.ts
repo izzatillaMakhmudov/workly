@@ -28,9 +28,7 @@ import { CompaniesModule } from './companies/companies.module';
 import { JobTitleController } from './job-title/job-title.controller';
 import { JobTitleService } from './job-title/job-title.service';
 import { JobTitleModule } from './job-title/job-title.module';
-import { AdminService } from './admin/admin.service';
-import { AdminModule } from './admin/admin.module';
-import { AdminController } from './admin/admin.controller';
+
 
 
 @Module({
@@ -64,11 +62,11 @@ import { AdminController } from './admin/admin.controller';
     DepartmentModule,
     CompaniesModule,
     JobTitleModule,
-    AdminModule
+    
   ],
   providers: [
     AuthService,
-    AdminService,
+    
   ],
 
   controllers: [
@@ -77,7 +75,7 @@ import { AdminController } from './admin/admin.controller';
     ShiftsController,
     DepartmentController,
     JobTitleController,
-    AdminController
+    
   ],
   exports: [AuthService]
 

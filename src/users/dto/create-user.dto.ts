@@ -1,4 +1,4 @@
-import { IsEmail, IsNumber, IsOptional } from "class-validator";
+import { IsEmail, IsEnum, IsInt, IsNumber, IsOptional, MinLength } from "class-validator";
 import { Column } from "typeorm";
 import { UserGender, UserRole } from "../user.entity";
 
@@ -18,31 +18,29 @@ export class CreateUserDto {
     email: string;
 
     @Column({ nullable: false })
-    password: string;
+    @MinLength(8)
+    hashed_password: string;
 
-    @Column({
-        type: 'enum',
-        enum: UserRole,
-        default: 'employee'
-    })
-    role: UserRole;
+    @IsEnum(UserRole)
+    @IsOptional()
+    role?: UserRole
 
-    @Column({
-        type: 'enum',
-        enum: UserGender,
-        default: 'not set'
-    })
-    gender: UserGender;
+    @IsEnum(UserGender)
+    @IsOptional()
+    gender?: UserGender
 
     @IsNumber()
     pinfl: number;
 
+    @IsInt()
+    company_id?: number;
+
     @IsOptional()
-    @IsNumber()
+    @IsInt()
     department_id?: number;
 
     @IsOptional()
-    @IsNumber()
+    @IsInt()
     shift_id?: number;
 
 }

@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { permission } from 'process';
 import { UsersService } from 'src/users/users.service';
+import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class AuthService {
@@ -12,12 +13,16 @@ export class AuthService {
         private configService: ConfigService // inject properly
     ) { }
 
-    async signIn(
-        email: string,
-        password: string):
-        Promise<{ access_token: string }> {
+    async signIn(email: string, password: string): Promise<{ access_token: string }> {
         const user = await this.usersService.findOneByEmail(email);
-        if (user?.password !== password) {
+
+        if (!user) {
+            throw new UnauthorizedException('User not found')
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, user.hashed_password);
+
+        if (!isPasswordValid) {
             throw new UnauthorizedException('Invalid credentials');
         }
 
@@ -25,7 +30,8 @@ export class AuthService {
             email: user.email,
             sub: user.id,
             companyId: user.company.id,
-            permissions: user.permissions
+            permissions: user.permissions,
+            role: user.role
         };
         return {
             access_token: await this.jwtService.signAsync(payload, {
