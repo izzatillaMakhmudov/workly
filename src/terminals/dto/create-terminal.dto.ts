@@ -1,3 +1,4 @@
+import { IsInt } from "class-validator";
 import { Column } from "typeorm";
 
 export class CreateTerminalDto {
@@ -9,6 +10,9 @@ export class CreateTerminalDto {
 
     @Column()
     location: string
+
+    @IsInt()
+    company_id?: number;
 
     @Column()
     ip_address: string

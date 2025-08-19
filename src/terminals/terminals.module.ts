@@ -7,12 +7,14 @@ import { Terminal } from './terminals.entity';
 import { UsersModule } from 'src/users/users.module';
 import { CompaniesModule } from 'src/companies/companies.module';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { Company } from 'src/companies/companies.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       Users,
-      Terminal
+      Terminal,
+      Company
     ]),
     UsersModule,
     CompaniesModule

@@ -1,3 +1,4 @@
+
 import { Company } from "src/companies/companies.entity";
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
