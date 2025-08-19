@@ -1,3 +1,4 @@
+import { IsInt } from "class-validator";
 import { Column } from "typeorm";
 
 export class CreateShiftDto {
@@ -9,6 +10,9 @@ export class CreateShiftDto {
 
     @Column({ nullable: false })
     end_time: string;
+
+    @IsInt()
+    company_id?: number;
 
     @Column({ nullable: false })
     break_start: string;

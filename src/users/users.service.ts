@@ -43,7 +43,6 @@ export class UsersService {
 
 
         if (role === 'super_admin') {
-            // super_admin can assign company, department, shift optionally
             if (dto.company_id) {
                 company = await this.companyRepository.findOne({ where: { id: dto.company_id } });
                 if (!company) throw new NotFoundException('Company not found');
@@ -59,7 +58,7 @@ export class UsersService {
                 if (!shift) throw new NotFoundException('Shift not found');
             }
         } else {
-            // normal admin → company auto-assigned from admin’s company
+            
             company = admin.company;
         }
         const newUser = this.usersRepository.create({
@@ -70,7 +69,6 @@ export class UsersService {
             shift: shift ?? undefined
         });
 
-        // return this.usersRepository.save(newUser);
         const saved = await this.usersRepository.save(newUser);
         return plainToInstance(Users, saved);
     }
@@ -95,7 +93,6 @@ export class UsersService {
             relations: ['company']
         })
 
-        // return users;
         return plainToInstance(Users, users)
     }
 
@@ -132,7 +129,6 @@ export class UsersService {
             throw new ForbiddenException("Something went wrong")
         }
 
-        // return user
         return plainToInstance(Users, user)
     }
 
@@ -241,9 +237,6 @@ export class UsersService {
         user.permissions = permissions;
         return this.usersRepository.save(user);
     }
-
-
-
 
 }
 

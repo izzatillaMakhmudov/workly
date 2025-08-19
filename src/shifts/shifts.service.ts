@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { Users } from 'src/users/user.entity';
 import { CreateShiftDto } from './dto/create-shift.dto';
 import { UpdateShiftDto } from './dto/update-shift.dto';
+import { Company } from 'src/companies/companies.entity';
 
 @Injectable()
 export class ShiftsService {
@@ -13,32 +14,55 @@ export class ShiftsService {
         private readonly shiftsRepository: Repository<Shift>,
 
         @InjectRepository(Users)
-        private readonly usersRepository: Repository<Users>
+        private readonly usersRepository: Repository<Users>,
+
+        @InjectRepository(Company)
+        private readonly companyRepository: Repository<Company>
     ) { }
 
 
-    async createShift(dto: CreateShiftDto, adminId: number) {
+    async createShift(dto: CreateShiftDto, adminId: number, role: string) {
         const admin = await this.usersRepository.findOne({
             where: { id: adminId },
             relations: ['company']
         });
 
-        // console.log('Admin:', admin?.company?.id);
+        if (!admin || !admin.company) {
+            throw new UnauthorizedException('Admin has no company assigned')
+        }
 
-        if (!admin || !admin.company) throw new UnauthorizedException('Admin has no company assigned')
+        let company: Company | null = null;
+
+        if (role === 'super_admin') {
+            if (dto.company_id) {
+                company = await this.companyRepository.findOne({ where: { id: dto.company_id } });
+                if (!company) throw new NotFoundException('Company not found');
+            }
+        } else {
+            company = admin.company;
+        }
 
         const newShift = this.shiftsRepository.create({
             ...dto,
-            company: admin.company,
+            company: company ?? undefined,
         })
-
-        // console.log('New Shift:', newShift);
 
         return this.shiftsRepository.save(newShift);
     }
 
-    async findOne(adminId: number, id: number): Promise<Shift | null> {
-        // console.log('Fetching shift with ID:', id);
+    async findOne(adminId: number, id: number, role: string): Promise<Shift | null> {
+        if (role === 'super_admin') {
+            const oneShift = await this.shiftsRepository.findOne({
+                where: { id },
+                relations: ['company']
+            })
+
+            if (!oneShift) {
+                throw new NotFoundException("Shift Not Found")
+            }
+
+            return oneShift
+        }
 
         const admin = await this.usersRepository.findOne({
             where: { id: adminId },
@@ -47,12 +71,14 @@ export class ShiftsService {
 
         if (!admin || !admin.company) throw new UnauthorizedException('Admin has no company assigned');
 
-        // console.log('Admin ID:', adminId);
-
         const shift = await this.shiftsRepository.findOne({
             where: { id },
             relations: ['company']
         });
+
+        if (!shift) {
+            throw new NotFoundException("Shift Not Found")
+        }
 
         if (shift?.company?.id !== admin.company.id) {
             throw new ForbiddenException('Something went wrong');
@@ -61,33 +87,54 @@ export class ShiftsService {
     }
 
 
-    async findAll(adminId: number): Promise<Shift[]> {
-        // console.log('Fetching shifts for admin ID:', adminId);
+    async findAll(adminId: number, role: string): Promise<Shift[]> {
+        if (role === "super_admin") {
+            const allShifts = await this.shiftsRepository.find({
+                relations: ['company']
+            })
+
+            if (!allShifts) {
+                throw new NotFoundException("Shifts Not Found")
+            }
+
+            return allShifts
+        }
+
         const admin = await this.usersRepository.findOne({
             where: { id: adminId },
             relations: ['company']
         });
 
-        // console.log('Admin:', admin);
 
         if (!admin || !admin.company) throw new UnauthorizedException('Admin has no company assigned');
 
         return this.shiftsRepository.find({
-            where: { company: { id: admin.company.id } }
+            where: { company: { id: admin.company.id } },
+            relations: ['company']
         });
     }
 
-    async delete(adminId: number, id: number): Promise<void> {
-        // console.log('Deleting shift with ID:', id);
+    async delete(adminId: number, id: number, role: string): Promise<void> {
+        if (role === 'super_admin') {
+            const oneShift = await this.shiftsRepository.findOne({
+                where: { id },
+                relations: ['company']
+            })
+
+            if (!oneShift) {
+                throw new NotFoundException("Shift Not Found")
+            }
+
+            await this.shiftsRepository.delete(id)
+            return
+
+        }
         const admin = await this.usersRepository.findOne({
             where: { id: adminId },
             relations: ['company']
         });
 
         if (!admin || !admin.company) throw new UnauthorizedException('Admin has no company assigned');
-
-
-        // console.log('Admin:', admin);
 
         const shift = await this.shiftsRepository.findOne({
             where: { id },
@@ -101,10 +148,23 @@ export class ShiftsService {
         }
 
         await this.shiftsRepository.delete(id)
+        return
     }
 
-    async update(adminId: number, id: number, updateShiftDto: UpdateShiftDto): Promise<Shift | null> {
-        // console.log('Updating the shift with id: ', id)
+    async update(adminId: number, id: number, updateShiftDto: UpdateShiftDto, role: string): Promise<Shift | null> {
+        if (role === 'super_admin') {
+            const oneShift = await this.shiftsRepository.findOne({
+                where: { id },
+                relations: ['company']
+            })
+
+            if (!oneShift) {
+                throw new NotFoundException("Shift Not Found")
+            }
+
+            await this.shiftsRepository.update(id, updateShiftDto)
+            return this.shiftsRepository.findOne({ where: { id } })
+        }
 
         const admin = await this.usersRepository.findOne({
             where: { id: adminId },
@@ -117,6 +177,10 @@ export class ShiftsService {
             where: { id },
             relations: ['company']
         });
+
+        if (!shift) {
+            throw new NotFoundException("Shift Not Found")
+        }
 
         if (shift?.company?.id !== admin.company.id) {
             throw new ForbiddenException('Something went wrong');

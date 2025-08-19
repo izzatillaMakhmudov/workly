@@ -13,8 +13,9 @@ import { CompaniesModule } from 'src/companies/companies.module';
 @Module({
     imports: [
         TypeOrmModule.forFeature([
-            Shift,        
-            Users
+            Shift,
+            Users,
+            Company
         ]),
         UsersModule,
         CompaniesModule

@@ -1,4 +1,19 @@
-import { PartialType } from "@nestjs/mapped-types";
-import { CreateShiftDto } from "./create-shift.dto";
+import { Column } from "typeorm";
 
-export class UpdateShiftDto extends PartialType(CreateShiftDto) {}
+
+export class UpdateShiftDto {
+    @Column({ nullable: false })
+    name: string;
+
+    @Column({ nullable: false })
+    start_time: string;
+
+    @Column({ nullable: false })
+    end_time: string;
+
+    @Column({ nullable: false })
+    break_start: string;
+
+    @Column({ nullable: false })
+    break_end: string;
+}
