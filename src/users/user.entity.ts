@@ -60,10 +60,16 @@ export class Users {
     })
     pinfl: number
 
+    // @Column({ nullable: true })
+    // resetToken?: string | null
+
+    // @Column({ type: 'timestamp', nullable: true })
+    // resetTokenExpires?: Date | null
+
     @ManyToOne(() => Company, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'company_id' })
     company: Company;
-    
+
     @ManyToOne(() => Department, { onDelete: 'SET NULL', nullable: true })
     @JoinColumn({ name: 'department_id' })
     department: Department | null;

@@ -15,13 +15,11 @@ export class ShiftsController {
     @Get('')
     async fidAll(@Req() req: Request) {
         const admin = req['user'];
-        // console.log('req: ', req['user']);
         return this.shiftsService.findAll(admin.sub, admin.role);
     }
 
     @Get(':id')
     async findOne(@Param('id') id: number, @Req() req: Request) {
-        // console.log('Fetching shift with ID:', id);
         const admin = req['user'];
         return this.shiftsService.findOne(admin.sub, id, admin.role);
     }
@@ -29,7 +27,6 @@ export class ShiftsController {
     @Post('')
     async createShift(@Req() req: Request, @Body() dto: CreateShiftDto) {
         const admin = req['user'];
-        // console.log('req: ', req['user']);
         return this.shiftsService.createShift(dto, admin.sub, admin.role);
     }
 

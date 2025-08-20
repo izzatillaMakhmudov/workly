@@ -150,13 +150,15 @@ export class ShiftsService {
             relations: ['company']
         });
 
+        if (shift?.company?.id !== admin.company.id) {
+            throw new ForbiddenException('Something went wrong');
+        }
+
         if (!shift) {
             throw new NotFoundException("Shift Not Found")
         }
 
-        if (shift?.company?.id !== admin.company.id) {
-            throw new ForbiddenException('Something went wrong');
-        }
+
 
         await this.shiftsRepository.update(id, updateShiftDto)
         return this.shiftsRepository.findOne({ where: { id } })

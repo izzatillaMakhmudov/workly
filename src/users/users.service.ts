@@ -58,7 +58,7 @@ export class UsersService {
                 if (!shift) throw new NotFoundException('Shift not found');
             }
         } else {
-            
+
             company = admin.company;
         }
         const newUser = this.usersRepository.create({
@@ -227,7 +227,7 @@ export class UsersService {
         }
 
         await this.usersRepository.delete(id);
-        return 
+        return
     }
 
     async updatePermissions(userId: number, permissions: UserPermissions[]) {

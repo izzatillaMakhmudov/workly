@@ -27,4 +27,5 @@ export class AuthController {
     getProfile() {
         return { 'message': 'This is a protected route, you must be authenticated to access it.' };
     }
+
 }
