@@ -123,6 +123,8 @@ export class CompaniesService {
             where: { id },
         });
 
+        console.log('Updating Company ID:', id, 'with data:', dto);
+
         if (!company) {
             throw new NotFoundException(`Company with ID ${id} not found`);
         }

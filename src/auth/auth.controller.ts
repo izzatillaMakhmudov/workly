@@ -5,10 +5,14 @@ import {
     HttpCode,
     HttpStatus,
     Post,
+    Req,
+    Res,
+    UnauthorizedException,
     UseGuards
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
+import { Response } from 'express';
 
 
 @Controller('auth')
@@ -18,14 +22,37 @@ export class AuthController {
 
     @HttpCode(HttpStatus.OK)
     @Post('login')
-    signIn(@Body() signInDto: Record<string, any>) {
-        return this.authService.signIn(signInDto.email, signInDto.password);
+    async signIn(
+        @Body() signInDto: Record<string, any>,
+        @Res({ passthrough: true }) res: Response
+    ) {
+        const { access_token } = await this.authService.signIn(
+            signInDto.email,
+            signInDto.password,
+        );
+
+        res.cookie('token', access_token, {
+            httpOnly: true,
+            sameSite: 'none',
+            secure: true,
+        });
+        return { message: 'Login successful' };
     }
 
     @UseGuards(AuthGuard)
     @Get('profile')
-    getProfile() {
-        return { 'message': 'This is a protected route, you must be authenticated to access it.' };
+    getProfile(@Req() req) {
+        return { user: req.user };
     }
+
+
+    @Post('logout')
+    async logout(@Res({ passthrough: true }) res: Response) {
+        res.clearCookie('token');
+        return { message: 'Logged out' };
+    }
+
+
+
 
 }

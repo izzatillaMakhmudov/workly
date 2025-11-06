@@ -177,8 +177,8 @@ export class ShiftsService {
 
             await this.shiftsRepository.delete(id)
             return
-
         }
+        
         const admin = await this.usersRepository.findOne({
             where: { id: adminId },
             relations: ['company']

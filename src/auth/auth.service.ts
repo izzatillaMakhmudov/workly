@@ -9,13 +9,13 @@ import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class AuthService {
-    
+
     constructor(
         private usersService: UsersService,
         private jwtService: JwtService,
         private configService: ConfigService // inject properly
     ) {
-      
+
     }
 
     async signIn(email: string, password: string): Promise<{ access_token: string }> {
@@ -41,8 +41,18 @@ export class AuthService {
         return {
             access_token: await this.jwtService.signAsync(payload, {
                 secret: this.configService.get<string>('JWT_SECRET'),
+                expiresIn: '5h',
             }),
         };
     }
 
+    async verifyToken(token: string) {
+        return this.jwtService.verifyAsync(token, {
+            secret: this.configService.get<string>('JWT_SECRET'),
+        });
+    }
+
 }
+
+
+

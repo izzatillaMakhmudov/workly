@@ -1,6 +1,6 @@
 export class JwtConstants {
     static readonly secret = 'secretKey'; // This should be stored securely, e.g., in environment variables
-    static readonly expiresIn = '1h'; // Token expiration time
+    static readonly expiresIn = '5h'; // Token expiration time
     static readonly refreshTokenExpiresIn = '7d'; // Refresh token expiration time
     static readonly algorithm = 'HS256'; // JWT signing algorithm
     static readonly issuer = 'your-issuer'; // Issuer of the token
