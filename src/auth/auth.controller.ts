@@ -31,9 +31,10 @@ export class AuthController {
             signInDto.password,
         );
 
+
         res.cookie('token', access_token, {
             httpOnly: true,
-            sameSite: 'none',
+            sameSite: 'lax',
             secure: true,
         });
         return { message: 'Login successful' };
