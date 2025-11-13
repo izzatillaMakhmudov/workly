@@ -40,8 +40,8 @@ export class AuthController {
         return { message: 'Login successful' };
     }
 
+    @Get('check')
     @UseGuards(AuthGuard)
-    @Get('profile')
     getProfile(@Req() req) {
         return { user: req.user };
     }
@@ -49,7 +49,11 @@ export class AuthController {
 
     @Post('logout')
     async logout(@Res({ passthrough: true }) res: Response) {
-        res.clearCookie('token');
+        res.clearCookie('token', {
+            httpOnly: true,
+            sameSite: 'lax',
+            secure: true
+        });
         return { message: 'Logged out' };
     }
 
