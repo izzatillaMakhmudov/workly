@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { CompanyAccessGuard } from 'src/common/guards/company-access/company-access.guard';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
+import { Industry } from './companies.entity';
 
 
 
@@ -26,6 +27,11 @@ export class CompaniesController {
     async createCompany(@Req() req: Request, @Body() dto: CreateCompanyDto) {
         const admin = req['user']
         return this.companiesService.createCompany(dto, admin.role)
+    }
+
+    @Get('industries')
+    getIndustries(){
+        return Object.values(Industry)
     }
 
     @Get('')
