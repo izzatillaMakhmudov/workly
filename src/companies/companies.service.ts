@@ -160,22 +160,22 @@ export class CompaniesService {
         return this.companyRepository.findOne({ where: { id } })
     }
 
-    // async delete(id: number, role: string) {
-    //     if (role !== 'super_admin') {
-    //         throw new ForbiddenException("Something went wrong")
-    //     }
+    async delete(id: number, role: string) {
+        if (role !== 'super_admin') {
+            throw new ForbiddenException("Something went wrong")
+        }
 
-    //     const company = await this.companyRepository.findOne({
-    //         where: { id },
-    //     });
+        const company = await this.companyRepository.findOne({
+            where: { id },
+        });
 
-    //     if (!company) {
-    //         throw new NotFoundException(`Company with ID ${id} not found`);
-    //     }
+        if (!company) {
+            throw new NotFoundException(`Company with ID ${id} not found`);
+        }
 
-    //     await this.companyRepository.remove(company); // safer than delete(id), triggers hooks
-    //     return { message: `Company with ID ${id} has been deleted` };
-    // }
+        await this.companyRepository.remove(company); // safer than delete(id), triggers hooks
+        return { message: `Company with ID ${id} has been deleted` };
+    }
 
 
 

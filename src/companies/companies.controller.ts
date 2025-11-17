@@ -1,4 +1,4 @@
-import { Body, Controller, Get, InternalServerErrorException, Param, Patch, Post, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, InternalServerErrorException, Param, Patch, Post, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { CompaniesService } from './companies.service';
 import { Request } from 'express';
 import { AuthGuard } from 'src/auth/auth.guard';
@@ -30,7 +30,7 @@ export class CompaniesController {
     }
 
     @Get('industries')
-    getIndustries(){
+    getIndustries() {
         return Object.values(Industry)
     }
 
@@ -50,6 +50,12 @@ export class CompaniesController {
     async update(@Param('id') id: number, @Body() dto: UpdateCompanyDto, @Req() req: Request) {
         const admin = req['user']
         return this.companiesService.update(id, dto, admin.sub, admin.role)
+    }
+
+    @Delete(':id')
+    async delete(@Param('id') id: number, @Req() req: Request) {
+        const admin = req['user']
+        return this.companiesService.delete(id, admin.role)
     }
 
 }

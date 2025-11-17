@@ -7,6 +7,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { PermissionGuard } from 'src/common/guards/permission.guard';
 import { Permissions } from 'src/common/decorators/permissions.decorator';
 import { UserPermissions } from './permissions.enum';
+import { UserGender, UserRole } from './user.entity';
 
 @Controller('users')
 @UseGuards(AuthGuard)
@@ -18,6 +19,21 @@ export class UsersController {
     async create(@Req() req: Request, @Body() dto: CreateUserDto) {
         const adminUser = req['user']
         return this.usersService.createUser(dto, adminUser.sub, adminUser.role)
+    }
+
+    @Get('gender')
+    getGender() {
+        return Object.values(UserGender)
+    }
+
+    @Get('role')
+    getRole() {
+        return Object.values(UserRole)
+    }
+
+    @Get('permissions')
+    getPermissions() {
+        return Object.values(UserPermissions)
     }
 
     @Get()
