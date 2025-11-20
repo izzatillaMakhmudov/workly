@@ -27,8 +27,11 @@ export class UsersController {
     }
 
     @Get('role')
-    getRole() {
-        return Object.values(UserRole)
+    getRole(@Req() req: Request) {
+        const admin = req['user']
+        return this.usersService.returnRole(admin.sub, admin.role)
+        // return Object.values(UserRole)
+
     }
 
     @Get('permissions')

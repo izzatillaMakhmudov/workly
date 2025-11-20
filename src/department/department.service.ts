@@ -25,7 +25,7 @@ export class DepartmentService {
     ) { }
 
     async createDepartment(adminId: number, dto: CreateDepartmentDto, role: string): Promise<Department | null> {
-
+        
         const admin = await this.usersRepository.findOne({
             where: { id: adminId },
             relations: ['company']

@@ -1,6 +1,6 @@
 import { BadRequestException, Body, ForbiddenException, Injectable, NotFoundException, Req, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Users } from './user.entity';
+import { UserRole, Users } from './user.entity';
 import { Repository } from 'typeorm';
 import { Company } from 'src/companies/companies.entity';
 import { Department } from 'src/department/department.entity';
@@ -25,6 +25,28 @@ export class UsersService {
         @InjectRepository(Shift)
         private readonly shiftRepository: Repository<Shift>
     ) { }
+
+    
+
+    async returnRole(adminId: number, role: string) {
+        const admin = await this.usersRepository.findOne({
+            where: { id: adminId },
+            relations: ['company']
+        });
+
+        if (!admin || !admin.company) {
+            throw new UnauthorizedException('Admin has no company assigned')
+        }
+        let roles = Object.values(UserRole)
+        
+        if (role !== 'super_admin') {
+
+            roles = roles.filter(role => role !== "super_admin");
+            return roles
+        }
+
+        return roles
+    }
 
     async createUser(dto: CreateUserDto, adminId: number, role: string): Promise<Users | null> {
 
@@ -143,7 +165,7 @@ export class UsersService {
     async update(adminId: number, id: number, updateUserDto: UpdateUserDto, role: string): Promise<Users | null> {
         console.log('UpdateUserDto:', updateUserDto);
         console.log('AdminId:', adminId, 'UserId to update:', id, 'Role:', role);
-        
+
         // Handle password field mapping (if front sends plain password)   
         if (role === 'super_admin') {
             const oneUser = await this.usersRepository.findOne({
@@ -155,7 +177,7 @@ export class UsersService {
                 throw new NotFoundException('User Not Found');
             }
 
-            if (updateUserDto.password) {
+            if (updateUserDto.password && updateUserDto.password !== '') {
                 (updateUserDto as any).hashed_password = updateUserDto.password;
                 delete (updateUserDto as any).password;
             }
