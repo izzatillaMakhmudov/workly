@@ -135,6 +135,19 @@ export class ShiftsService {
         return shifts
     }
 
+    async getShiftsByCompany(companyId: number): Promise<Shift[]> {
+        const shifts = await this.shiftsRepository.find({
+            where: { company: { id: companyId } },
+            relations: ['company']
+        });
+
+        if (!shifts) {
+            throw new NotFoundException("Shifts Not Found")
+        }
+
+        return shifts
+    }
+
     async findOne(adminId: number, id: number, role: string): Promise<Shift | null> {
         if (role === 'super_admin') {
             const oneShift = await this.shiftsRepository.findOne({
@@ -174,6 +187,24 @@ export class ShiftsService {
     }
 
     async update(adminId: number, id: number, updateShiftDto: UpdateShiftDto, role: string): Promise<Shift | null> {
+
+        const start = toMinutes(updateShiftDto.start_time);
+        const end = toMinutes(updateShiftDto.end_time);
+        const breakStart = toMinutes(updateShiftDto.break_start);
+        const breakEnd = toMinutes(updateShiftDto.break_end);
+
+        if (start >= end) {
+            throw new BadRequestException("Start time must be before end time");
+        }
+
+        if (breakStart >= breakEnd) {
+            throw new BadRequestException("Break start must be before break end");
+        }
+
+        if (breakStart < start || breakEnd > end) {
+            throw new BadRequestException("Break must be inside shift time");
+        }
+
         if (role === 'super_admin') {
             const oneShift = await this.shiftsRepository.findOne({
                 where: { id },

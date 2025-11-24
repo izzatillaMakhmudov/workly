@@ -24,6 +24,12 @@ export class ShiftsController {
         return this.shiftsService.findOne(admin.sub, id, admin.role);
     }
 
+    @Get('company/:companyId')
+    async findByCompany(@Param('companyId') companyId: number, @Req() req: Request) {
+        const admin = req['user'];
+        return this.shiftsService.getShiftsByCompany(companyId);
+    }
+
     @Post('')
     async createShift(@Req() req: Request, @Body() dto: CreateShiftDto) {
         const admin = req['user'];
