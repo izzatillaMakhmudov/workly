@@ -24,6 +24,12 @@ export class DepartmentController {
         return this.departmentService.findAllDepartments(admin.sub, admin.role)
     }
 
+    @Get('company/:companyId')
+    async findByCompany(@Param('companyId') companyId: number, @Req() req: Request) {
+        const admin = req['user']
+        return this.departmentService.getDepartmentsByCompany(companyId)
+    }
+
     @Get(':id')
     async findOne(@Param('id') id: number, @Req() req: Request) {
         const admin = req['user']

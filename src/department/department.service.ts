@@ -25,7 +25,7 @@ export class DepartmentService {
     ) { }
 
     async createDepartment(adminId: number, dto: CreateDepartmentDto, role: string): Promise<Department | null> {
-        
+
         const admin = await this.usersRepository.findOne({
             where: { id: adminId },
             relations: ['company']
@@ -54,6 +54,20 @@ export class DepartmentService {
         const saved = await this.departmentRepository.save(newDepartment)
 
         return saved
+    }
+
+    async getDepartmentsByCompany(companyId: number): Promise<Department[]> {
+        const company = await this.companyRepository.findOne({ where: { id: companyId } });
+        if (!company) {
+            throw new NotFoundException('Company not found');
+        }
+
+        const departments = await this.departmentRepository.find({
+            where: { company: { id: companyId } },
+            relations: ['company']
+        });
+
+        return departments;
     }
 
     async findAllDepartments(adminId: number, role: string): Promise<Department[]> {
