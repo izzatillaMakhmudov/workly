@@ -37,7 +37,7 @@ export class Users {
 
     @Exclude()
     @Column()
-    hashed_password: string;
+    password: string;
 
     @Column({
         type: 'enum',
@@ -87,10 +87,10 @@ export class Users {
     @BeforeInsert()
     @BeforeUpdate()
     async hashPassword() {
-        if (this.hashed_password && !this.hashed_password.startsWith('$2b$')) {
+        if (this.password && !this.password.startsWith('$2b$')) {
             // only hash if it's not already hashed
             const salt = await bcrypt.genSalt(10);
-            this.hashed_password = await bcrypt.hash(this.hashed_password, salt);
+            this.password = await bcrypt.hash(this.password, salt);
         }
     }
 

@@ -43,4 +43,8 @@ export class Company {
 
     @CreateDateColumn()
     created_at: Date;
+
+    @Column()
+    stir: number;
+
 }

@@ -8,6 +8,8 @@ import { Terminal } from 'src/terminals/terminals.entity';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { plainToInstance } from 'class-transformer';
 import { UpdateCompanyDto } from './dto/update-company.dto';
+import { Department } from 'src/department/department.entity';
+import { Shift } from 'src/shifts/shifts.entity';
 
 
 @Injectable()
@@ -21,6 +23,12 @@ export class CompaniesService {
 
         @InjectRepository(Terminal)
         private readonly terminalRepository: Repository<Terminal>,
+
+        @InjectRepository(Department)
+        private readonly departmentRepository: Repository<Department>,
+
+        @InjectRepository(Shift)
+        private readonly shiftRepository: Repository<Shift>
 
     ) { }
 
@@ -48,6 +56,7 @@ export class CompaniesService {
             const newCompany = this.companyRepository.create({
                 name: dto.name,
                 industry: dto.industry,
+                stir: dto.stir,
                 address: dto.address
             })
 
@@ -57,12 +66,31 @@ export class CompaniesService {
                 first_name: dto.first_name,
                 last_name: dto.last_name,
                 email: dto.email,
-                hashed_password: dto.hashed_password,
+                password: dto.password,
                 pinfl: dto.pinfl,
                 gender: dto.gender,
                 role: UserRole.COMPANY_ADMIN,
                 company: savedCompany
             })
+
+            const newShift = this.shiftRepository.create({
+                name: "Default Shift",
+                start_time: "09:00",
+                end_time: "18:00",
+                break_start: "13:00",
+                break_end: "14:00",
+                company: savedCompany
+
+            })
+
+            const newDepartment = this.departmentRepository.create({
+                name: "Default Department",
+                company: savedCompany
+            })
+
+            await this.shiftRepository.save(newShift);
+            await this.departmentRepository.save(newDepartment);
+
 
             const savedUser = await this.usersRepository.save(newUser)
 
@@ -122,8 +150,6 @@ export class CompaniesService {
         const company = await this.companyRepository.findOne({
             where: { id },
         });
-
-        console.log('Updating Company ID:', id, 'with data:', dto);
 
         if (!company) {
             throw new NotFoundException(`Company with ID ${id} not found`);

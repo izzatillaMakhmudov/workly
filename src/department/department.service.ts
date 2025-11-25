@@ -57,16 +57,24 @@ export class DepartmentService {
     }
 
     async getDepartmentsByCompany(companyId: number): Promise<Department[]> {
-        const company = await this.companyRepository.findOne({ where: { id: companyId } });
-        if (!company) {
-            throw new NotFoundException('Company not found');
+        const companyIdNum = Number(companyId);
+        if (isNaN(companyIdNum) || companyIdNum <= 0) {
+            throw new ForbiddenException('Invalid company ID.');
         }
-
+        const company = await this.companyRepository.findOne({
+            where: { id: companyIdNum }
+        });
+        if (!company) {
+            throw new NotFoundException('Company not found.');
+        }
         const departments = await this.departmentRepository.find({
-            where: { company: { id: companyId } },
+            where: { company: { id: companyIdNum } },
             relations: ['company']
         });
+        if (departments.length === 0) {
 
+            throw new NotFoundException('No departments found for this company.');
+        }
         return departments;
     }
 

@@ -19,7 +19,7 @@ export class CreateUserDto {
 
     @Column({ nullable: false })
     @MinLength(8)
-    hashed_password: string;
+    password: string;
 
     @IsEnum(UserRole)
     @IsOptional()

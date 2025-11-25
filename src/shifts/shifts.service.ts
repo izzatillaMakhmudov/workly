@@ -136,16 +136,26 @@ export class ShiftsService {
     }
 
     async getShiftsByCompany(companyId: number): Promise<Shift[]> {
+        
+        const companyIdNum = Number(companyId);
+
+        if (isNaN(companyIdNum) || companyIdNum <= 0) {
+            
+            throw new NotFoundException("Invalid or missing Company ID.");
+        }
+
         const shifts = await this.shiftsRepository.find({
-            where: { company: { id: companyId } },
+            
+            where: { company: { id: companyIdNum } },
             relations: ['company']
         });
 
-        if (!shifts) {
-            throw new NotFoundException("Shifts Not Found")
+        
+        if (shifts.length === 0) {
+            throw new NotFoundException("Shifts Not Found for the specified company.");
         }
 
-        return shifts
+        return shifts;
     }
 
     async findOne(adminId: number, id: number, role: string): Promise<Shift | null> {

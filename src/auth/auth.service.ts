@@ -19,13 +19,13 @@ export class AuthService {
     }
 
     async signIn(email: string, password: string): Promise<{ access_token: string }> {
-        
+
         const user = await this.usersService.findOneByEmail(email);
         if (!user) {
             throw new UnauthorizedException('User not found')
         }
 
-        const isPasswordValid = await bcrypt.compare(password, user.hashed_password);
+        const isPasswordValid = await bcrypt.compare(password, user.password);
 
         if (!isPasswordValid) {
             throw new UnauthorizedException('Invalid credentials');
