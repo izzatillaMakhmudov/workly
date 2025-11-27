@@ -28,6 +28,8 @@ import { CompaniesModule } from './companies/companies.module';
 import { JobTitleController } from './job-title/job-title.controller';
 import { JobTitleService } from './job-title/job-title.service';
 import { JobTitleModule } from './job-title/job-title.module';
+import { APP_GUARD } from '@nestjs/core';
+import { PermissionGuard } from './users/permission.guard';
 
 
 
@@ -37,6 +39,7 @@ import { JobTitleModule } from './job-title/job-title.module';
       envFilePath: '.env',
       isGlobal: true,
     }),
+
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (ConfigService: ConfigService) => ({
@@ -62,11 +65,11 @@ import { JobTitleModule } from './job-title/job-title.module';
     DepartmentModule,
     CompaniesModule,
     JobTitleModule,
-    
+
   ],
   providers: [
     AuthService,
-    
+
   ],
 
   controllers: [
@@ -75,7 +78,7 @@ import { JobTitleModule } from './job-title/job-title.module';
     ShiftsController,
     DepartmentController,
     JobTitleController,
-    
+
   ],
   exports: [AuthService]
 

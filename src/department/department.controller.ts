@@ -4,9 +4,12 @@ import { Request, Response } from 'express';
 import { CreateDepartmentDto } from './dto/create-department.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { UpdateDepartmentDto } from './dto/update-department.dto';
+import { PermissionGuard } from 'src/users/permission.guard';
+import { UserPermissions } from 'src/users/permissions.enum';
+import { Permissions } from 'src/common/decorators/permissions.decorator';
 
 @Controller('department')
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard, PermissionGuard)
 export class DepartmentController {
     constructor(
         private readonly departmentService: DepartmentService
@@ -19,6 +22,7 @@ export class DepartmentController {
     }
 
     @Get()
+    @Permissions(UserPermissions.VIEW_DEPARTMENT)
     async findAll(@Req() req: Request) {
         const admin = req['user']
         return this.departmentService.findAllDepartments(admin.sub, admin.role)

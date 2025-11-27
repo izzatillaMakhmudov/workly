@@ -10,11 +10,14 @@ import { CompanyAccessGuard } from 'src/common/guards/company-access/company-acc
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { Industry } from './companies.entity';
+import { Permissions } from 'src/common/decorators/permissions.decorator';
+import { UserPermissions } from 'src/users/permissions.enum';
+import { PermissionGuard } from 'src/users/permission.guard';
 
 
 
 @Controller('companies')
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard, PermissionGuard)
 export class CompaniesController {
     constructor(
         @InjectRepository(Department)
@@ -24,6 +27,7 @@ export class CompaniesController {
     ) { }
 
     @Post('')
+    @Permissions(UserPermissions.CREATE_COMPANY)
     async createCompany(@Req() req: Request, @Body() dto: CreateCompanyDto) {
         const admin = req['user']
         return this.companiesService.createCompany(dto, admin.role)
@@ -35,24 +39,28 @@ export class CompaniesController {
     }
 
     @Get('')
+    @Permissions(UserPermissions.VIEW_COMPANY)
     async findAll(@Req() req: Request) {
         const admin = req['user']
         return this.companiesService.findAll(admin.role)
     }
 
     @Get(':id')
+    @Permissions(UserPermissions.VIEW_COMPANY)
     async findOne(@Param('id') id: number, @Req() req: Request) {
         const admin = req['user']
         return this.companiesService.findOne(id, admin.sub, admin.role)
     }
 
     @Patch(':id')
+    @Permissions(UserPermissions.UPDATE_COMPANY)
     async update(@Param('id') id: number, @Body() dto: UpdateCompanyDto, @Req() req: Request) {
         const admin = req['user']
         return this.companiesService.update(id, dto, admin.sub, admin.role)
     }
 
     @Delete(':id')
+    @Permissions(UserPermissions.DELETE_COMPANY)
     async delete(@Param('id') id: number, @Req() req: Request) {
         const admin = req['user']
         return this.companiesService.delete(id, admin.role)
