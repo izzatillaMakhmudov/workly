@@ -27,16 +27,8 @@ export class PermissionGuard implements CanActivate {
 
         if (user.role === 'super_admin') return true;
 
-        const companyPermissions = [
-            UserPermissions.CREATE_COMPANY,
-            UserPermissions.UPDATE_COMPANY,
-            UserPermissions.DELETE_COMPANY,
-            UserPermissions.VIEW_COMPANY
-        ];
-
         if (
-            user.role === 'company_admin' &&
-            companyPermissions.every(p => !requiredPermissions.includes(p))
+            user.role === 'company_admin'
         ) {
             return true;
         }

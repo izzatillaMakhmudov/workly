@@ -16,6 +16,7 @@ export class DepartmentController {
     ) { }
 
     @Post()
+    @Permissions(UserPermissions.CREATE_DEPARTMENT)
     async createDepartment(@Req() req: Request, @Body() dto: CreateDepartmentDto) {
         const admin = req['user']
         return this.departmentService.createDepartment(admin.sub, dto, admin.role)
@@ -35,6 +36,7 @@ export class DepartmentController {
     }
 
     @Get(':id')
+    @Permissions(UserPermissions.VIEW_DEPARTMENT)
     async findOne(@Param('id') id: number, @Req() req: Request) {
         const admin = req['user']
         return this.departmentService.findOne(admin.sub, id, admin.role)
@@ -42,12 +44,14 @@ export class DepartmentController {
     }
 
     @Patch(':id')
+    @Permissions(UserPermissions.UPDATE_DEPARTMENT)
     async update(@Param('id') id: number, @Req() req: Request, @Body() dto: UpdateDepartmentDto) {
         const admin = req['user']
         return this.departmentService.update(admin.sub, id, dto, admin.role)
     }
 
     @Delete(':id')
+    @Permissions(UserPermissions.DELETE_DEPARTMENT)
     async remove(@Param('id') id: number, @Req() req: Request, @Res() res: Response) {
         const admin = req['user']
         await this.departmentService.delete(admin.sub, id, admin.role)

@@ -7,9 +7,10 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Permissions } from 'src/common/decorators/permissions.decorator';
 import { UserPermissions } from './permissions.enum';
 import { UserGender, UserRole } from './user.entity';
+import { PermissionGuard } from './permission.guard';
 
 @Controller('users')
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard, PermissionGuard)
 export class UsersController {
     constructor(private usersService: UsersService) { }
 
@@ -30,8 +31,6 @@ export class UsersController {
     getRole(@Req() req: Request) {
         const admin = req['user']
         return this.usersService.returnRole(admin.sub, admin.role)
-        // return Object.values(UserRole)
-
     }
 
     @Get('permissions')
