@@ -54,6 +54,7 @@ export class UsersController {
 
     @Patch(':id')
     @Permissions(UserPermissions.UPDATE_USER)
+    @Permissions(UserPermissions.MANAGAE_PERMISSION)
     async update(@Param('id') id: number, @Req() req: Request, @Body() dto: UpdateUserDto) {
         const admin = req['user']
         return this.usersService.update(admin.sub, id, dto, admin.role);
