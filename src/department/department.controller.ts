@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { DepartmentService } from './department.service';
 import { Request, Response } from 'express';
 import { CreateDepartmentDto } from './dto/create-department.dto';
@@ -24,9 +24,9 @@ export class DepartmentController {
 
     @Get()
     @Permissions(UserPermissions.VIEW_DEPARTMENT)
-    async findAll(@Req() req: Request) {
+    async findAll(@Req() req: Request, @Query('page') page: number = 1, @Query('size') size: number = 10) {
         const admin = req['user']
-        return this.departmentService.findAllDepartments(admin.sub, admin.role)
+        return this.departmentService.findAllDepartments(admin.sub, admin.role, Number(page), Number(size))
     }
 
     @Get('company/:companyId')

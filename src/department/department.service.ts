@@ -78,13 +78,30 @@ export class DepartmentService {
         return departments;
     }
 
-    async findAllDepartments(adminId: number, role: string): Promise<Department[]> {
+    async findAllDepartments(adminId: number, role: string, page: number, size: number): Promise<{
+        total: number;
+        page: number;
+        size: number;
+        length?: number;
+        content: Department[];
+    }> {
+        const skip = (page - 1) * size;
+        const take = size;
         if (role === 'super_admin') {
-            const allDepartments = await this.departmentRepository.find({
-                relations: ['company']
+            const [allDepartments, total] = await this.departmentRepository.findAndCount({
+                relations: ['company'],
+                skip,
+                take,
+                order: { created_at: 'DESC' }
             })
 
-            return allDepartments
+            return {
+                total,
+                page,
+                size,
+                length: allDepartments.length,
+                content: allDepartments
+            }
         }
 
         const admin = await this.usersRepository.findOne({
@@ -94,12 +111,21 @@ export class DepartmentService {
 
         if (!admin || !admin.company) throw new UnauthorizedException('Admin has no company assigned');
 
-        const departments = this.departmentRepository.find({
+        const [departments, total] = await this.departmentRepository.findAndCount({
             where: { company: { id: admin.company.id } },
-            relations: ['company']
+            relations: ['company'],
+            skip,
+            take,
+            order: { created_at: 'DESC' }
         })
 
-        return departments
+        return {
+            total,
+            page,
+            size,
+            length: departments.length,
+            content: departments
+        }
     }
 
     async findOne(adminId: number, id: number, role: string): Promise<Department | null> {

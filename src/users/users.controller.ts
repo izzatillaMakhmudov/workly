@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, ForbiddenException, Get, HttpStatus, Param, Patch, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, ForbiddenException, Get, HttpStatus, Param, Patch, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Request, Response } from 'express';
@@ -40,9 +40,12 @@ export class UsersController {
 
     @Get()
     @Permissions(UserPermissions.VIEW_USER)
-    async findAll(@Req() req: Request) {
+    async findAll(
+        @Req() req: Request,
+        @Query('page') page: number = 1,
+        @Query('size') size: number = 10) {
         const admin = req['user']
-        return this.usersService.findAll(admin.sub, admin.role)
+        return this.usersService.findAll(admin.sub, admin.role, Number(page), Number(size));
     }
 
     @Get(':id')
